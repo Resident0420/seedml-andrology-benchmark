@@ -1,0 +1,86 @@
+Variable,Role
+diagnostic,Target
+sample_state,Tier 1
+sample_appearance,Tier 1
+sample_agglutination,Tier 1
+sample_viscosity,Tier 1
+sample_liquefaction,Tier 1
+sample_red_blood_cells,Tier 1
+sample_leukocytes,Tier 1
+sample_ph,Tier 1
+sample_cells_round,Tier 1
+sample_vitality,Tier 1
+sample_survival_test,Tier 1
+sample_vol_initial,Tier 1
+sample_concentration_initial,Tier 1
+sample_morpho_normal,Tier 1
+sample_morpho_kruger,Tier 1
+sample_scd,Biomarker
+sample_production_total,Tier 1
+sample_num_prog_mob_total,Tier 1
+sample_bodies_gelatinous,Tier 1
+sample_num_spz_counted_pre,Morphology
+sample_num_spz_normal_pre,Morphology
+sample_morphology_normal_pre,Morphology
+sample_heads_total_pre,Morphology
+sample_heads_elongated_pre,Morphology
+sample_heads_piriform_pre,Morphology
+sample_heads_round_pre,Morphology
+sample_heads_amorphous_pre,Morphology
+sample_heads_macrocephalus_pre,Morphology
+sample_heads_microcephalus_pre,Morphology
+sample_heads_vacuole_pre,Morphology
+sample_heads_small_acrosome_pre,Morphology
+sample_heads_double_pre,Morphology
+sample_heads_combined_pre,Morphology
+sample_necks_bent_pre,Morphology
+sample_necks_tails_total_pre,Morphology
+sample_necks_ins_asymmetric_pre,Morphology
+sample_necks_thick_pre,Morphology
+sample_necks_thin_pre,Morphology
+sample_necks_combined_pre,Morphology
+sample_tails_short_pre,Morphology
+sample_tails_broken_pre,Morphology
+sample_tails_rolled_pre,Morphology
+sample_tails_multiple_pre,Morphology
+sample_tails_combined_pre,Morphology
+sample_anormal_total_pre,Morphology
+sample_drops,Other
+sample_cells_germinal,Other
+sample_spermatogoniums,Other
+sample_spermatocyte1,Other
+sample_spermatocyte2,Other
+sample_spermatids,Other
+sample_teratozoospermia_index,Other
+sample_recovery_technique,Post-treatment / Exclude
+sample_type_treat_recovery,Post-treatment / Exclude
+sample_num_spz_counted_post,Post-treatment / Exclude
+sample_num_spz_normal_post,Post-treatment / Exclude
+sample_morphology_normal_post,Post-treatment / Exclude
+sample_heads_total_post,Post-treatment / Exclude
+sample_heads_elongated_post,Post-treatment / Exclude
+sample_heads_piriform_post,Post-treatment / Exclude
+sample_heads_round_post,Post-treatment / Exclude
+sample_heads_amorphous_post,Post-treatment / Exclude
+sample_heads_macrocephalus_post,Post-treatment / Exclude
+sample_heads_microcephalus_post,Post-treatment / Exclude
+sample_heads_vacuole_post,Post-treatment / Exclude
+sample_heads_small_acrosome_post,Post-treatment / Exclude
+sample_heads_double_post,Post-treatment / Exclude
+sample_heads_combined_post,Post-treatment / Exclude
+sample_necks_bent_post,Post-treatment / Exclude
+sample_necks_tails_total_post,Post-treatment / Exclude
+sample_necks_ins_asymmetric_post,Post-treatment / Exclude
+sample_necks_thick_post,Post-treatment / Exclude
+sample_necks_thin_post,Post-treatment / Exclude
+sample_necks_combined_post,Post-treatment / Exclude
+sample_tails_short_post,Post-treatment / Exclude
+sample_tails_broken_post,Post-treatment / Exclude
+sample_tails_rolled_post,Post-treatment / Exclude
+sample_tails_multiple_post,Post-treatment / Exclude
+sample_tails_combined_post,Post-treatment / Exclude
+sample_anormal_total_post,Post-treatment / Exclude
+sample_production_total_final,Post-treatment / Exclude
+sample_citric,Biomarker
+sample_fructose,Biomarker
+sample_spz_swollen,Biomarker
