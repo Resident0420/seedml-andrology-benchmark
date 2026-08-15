@@ -1,11 +1,12 @@
 # A Reproducible Benchmarking Framework for Machine Learning–Based Multiclass Male Infertility Diagnosis Using the SEED-ML Dataset
 
 ## Authors
-**Jumin Kim**¹²  
-**Kang Byeong Jin**³
-¹ Sidney Kimmel Medical College, Thomas Jefferson University, Philadelphia, PA, USA  
-² Faculty of Medicine and Surgery, Università Cattolica del Sacro Cuore, Rome, Italy  
-³ Department of Urology, Pusan National University Hospital, Busan, Republic of Korea
+**Jumin Kim**
+- Sidney Kimmel Medical College, Thomas Jefferson University, Philadelphia, PA, USA
+- Faculty of Medicine and Surgery, Università Cattolica del Sacro Cuore, Rome, Italy
+
+**Kang Byeong Jin**
+- Department of Urology, Pusan National University Hospital, Busan, Republic of Korea
 
 ## Overview
 
