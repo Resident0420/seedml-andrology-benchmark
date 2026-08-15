@@ -115,7 +115,7 @@ All experiments were performed using:
 
 If you use this repository, please cite:
 
-Kim J, Byeong Jin K.
+Jumin K, Byeong Jin K.
 
 *A Reproducible Benchmarking Framework for Machine Learning–Based Multiclass Male Infertility Diagnosis Using the SEED-ML Dataset.*
 
