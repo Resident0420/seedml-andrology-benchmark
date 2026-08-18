@@ -5,8 +5,9 @@
 - Sidney Kimmel Medical College, Thomas Jefferson University, Philadelphia, PA, USA
 - Faculty of Medicine and Surgery, Università Cattolica del Sacro Cuore, Rome, Italy
 
-**Kang Byeong Jin**
-- Department of Urology, Pusan National University Hospital, Busan, Republic of Korea
+**Byeong Jin Kang**
+- Department of Urology, Pusan National University Hospital, Pusan National University School of Medicine, Busan, Republic of Korea
+- Biomedical Research Institute, Pusan National University Hospital, Busan, Republic of Korea
 
 ## Overview
 
