@@ -1,10 +1,16 @@
+import json
 import time
 
+import numpy as np
 import pandas as pd
 
 from sklearn.base import BaseEstimator, ClassifierMixin, clone
+from sklearn.metrics import balanced_accuracy_score, f1_score
 from sklearn.model_selection import (
+    ParameterGrid,
+    RandomizedSearchCV,
     RepeatedStratifiedKFold,
+    StratifiedKFold,
     cross_validate,
 )
 from sklearn.utils.class_weight import compute_sample_weight
@@ -14,17 +20,7 @@ from sklearn.utils.class_weight import compute_sample_weight
 # Balanced Sample-Weight Wrapper
 # ============================================
 
-class BalancedSampleWeightClassifier(
-    ClassifierMixin,
-    BaseEstimator,
-):
-    """
-    Wrapper for classifiers that support sample_weight
-    but do not provide class_weight="balanced".
-
-    Balanced sample weights are calculated independently
-    within each training fold during cross-validation.
-    """
+class BalancedSampleWeightClassifier(ClassifierMixin, BaseEstimator):
 
     def __init__(self, estimator):
         self.estimator = estimator
@@ -70,39 +66,6 @@ def benchmark_model(
     n_repeats=5,
     random_state=42,
 ):
-    """
-    Benchmark a classification model using repeated
-    stratified k-fold cross-validation.
-
-    Parameters
-    ----------
-    name : str
-        Model name.
-
-    model : sklearn-compatible estimator
-        Complete modeling pipeline.
-
-    X : pandas.DataFrame
-        Predictor variables.
-
-    y : array-like
-        Target labels.
-
-    n_splits : int, default=5
-        Number of folds per cross-validation repeat.
-
-    n_repeats : int, default=5
-        Number of cross-validation repeats.
-
-    random_state : int, default=42
-        Random seed controlling fold generation.
-
-    Returns
-    -------
-    dict
-        Summary of model performance and runtime.
-    """
-
     cv = RepeatedStratifiedKFold(
         n_splits=n_splits,
         n_repeats=n_repeats,
@@ -138,14 +101,10 @@ def benchmark_model(
         "Model": name,
         "Macro F1 Mean": scores["test_macro_f1"].mean(),
         "Macro F1 SD": scores["test_macro_f1"].std(),
-        "Balanced Accuracy Mean":
-            scores["test_balanced_accuracy"].mean(),
-        "Balanced Accuracy SD":
-            scores["test_balanced_accuracy"].std(),
-        "Weighted F1 Mean":
-            scores["test_weighted_f1"].mean(),
-        "Weighted F1 SD":
-            scores["test_weighted_f1"].std(),
+        "Balanced Accuracy Mean": scores["test_balanced_accuracy"].mean(),
+        "Balanced Accuracy SD": scores["test_balanced_accuracy"].std(),
+        "Weighted F1 Mean": scores["test_weighted_f1"].mean(),
+        "Weighted F1 SD": scores["test_weighted_f1"].std(),
         "Runtime Seconds": runtime,
     }
 
@@ -185,11 +144,6 @@ def benchmark_models(
     n_repeats=5,
     random_state=42,
 ):
-    """
-    Benchmark multiple classification models and
-    rank them according to mean Macro F1 score.
-    """
-
     all_results = []
 
     for name, model in models.items():
@@ -233,8 +187,6 @@ def benchmark_models(
 # ============================================
 
 def save_benchmark_results(results_df, output_path):
-    """Save benchmark results to CSV."""
-
     results_df.to_csv(
         output_path,
         index=False,
@@ -244,8 +196,6 @@ def save_benchmark_results(results_df, output_path):
 
 
 def print_benchmark_ranking(results_df):
-    """Print model rankings based on mean Macro F1."""
-
     if results_df.empty:
         print("No benchmark results available.")
         return
@@ -265,3 +215,151 @@ def print_benchmark_ranking(results_df):
         )
 
     print("=" * 70)
+
+
+# ============================================
+# Nested Hyperparameter-Tuning Benchmark
+# ============================================
+
+def nested_benchmark_models(
+    models,
+    search_spaces,
+    X,
+    y,
+    outer_splits=5,
+    inner_splits=3,
+    n_iter=12,
+    random_state=42,
+    search_jobs=2,
+):
+    y = np.asarray(y)
+    labels = np.unique(y)
+
+    if pd.Series(y).value_counts().min() < outer_splits:
+        raise ValueError(
+            "Too few observations for outer stratified CV."
+        )
+
+    outer_cv = StratifiedKFold(
+        n_splits=outer_splits,
+        shuffle=True,
+        random_state=random_state,
+    )
+
+    outer_partitions = list(outer_cv.split(X, y))
+    rows = []
+
+    for name, model in models.items():
+        print(
+            f"\nTuning and evaluating: {name}",
+            flush=True,
+        )
+
+        space = search_spaces[name]
+        candidates = min(n_iter, len(ParameterGrid(space)))
+
+        for fold, (train_idx, valid_idx) in enumerate(
+            outer_partitions,
+            start=1,
+        ):
+            X_train = X.iloc[train_idx]
+            X_valid = X.iloc[valid_idx]
+            y_train = y[train_idx]
+            y_valid = y[valid_idx]
+
+            if pd.Series(y_train).value_counts().min() < inner_splits:
+                raise ValueError(
+                    f"{name}, fold {fold}: too few observations "
+                    "for inner stratified CV."
+                )
+
+            inner_cv = StratifiedKFold(
+                n_splits=inner_splits,
+                shuffle=True,
+                random_state=random_state + fold,
+            )
+
+            search = RandomizedSearchCV(
+                estimator=clone(model),
+                param_distributions=space,
+                n_iter=candidates,
+                scoring="f1_macro",
+                cv=inner_cv,
+                refit=True,
+                n_jobs=search_jobs,
+                pre_dispatch=search_jobs,
+                random_state=random_state,
+                error_score="raise",
+                return_train_score=False,
+            )
+
+            start = time.perf_counter()
+
+            search.fit(X_train, y_train)
+            predictions = search.predict(X_valid)
+
+            elapsed = time.perf_counter() - start
+
+            row = {
+                "Model": name,
+                "Fold": fold,
+                "Macro F1": f1_score(
+                    y_valid,
+                    predictions,
+                    labels=labels,
+                    average="macro",
+                    zero_division=0,
+                ),
+                "Balanced Accuracy": balanced_accuracy_score(
+                    y_valid,
+                    predictions,
+                ),
+                "Weighted F1": f1_score(
+                    y_valid,
+                    predictions,
+                    labels=labels,
+                    average="weighted",
+                    zero_division=0,
+                ),
+                "Runtime Seconds": elapsed,
+                "Best Parameters": json.dumps(
+                    search.best_params_
+                ),
+            }
+
+            rows.append(row)
+
+            print(
+                f"  Fold {fold}/{outer_splits}: "
+                f"Macro F1 = {row['Macro F1']:.4f}",
+                flush=True,
+            )
+
+    details = pd.DataFrame(rows)
+
+    summary = (
+        details.groupby("Model", sort=False)
+        .agg(
+            **{
+                "Macro F1 Mean": ("Macro F1", "mean"),
+                "Macro F1 SD": ("Macro F1", "std"),
+                "Balanced Accuracy Mean": (
+                    "Balanced Accuracy", "mean"
+                ),
+                "Balanced Accuracy SD": (
+                    "Balanced Accuracy", "std"
+                ),
+                "Weighted F1 Mean": ("Weighted F1", "mean"),
+                "Weighted F1 SD": ("Weighted F1", "std"),
+                "Runtime Seconds": ("Runtime Seconds", "sum"),
+            }
+        )
+        .reset_index()
+        .sort_values(
+            "Macro F1 Mean",
+            ascending=False,
+        )
+        .reset_index(drop=True)
+    )
+
+    return summary, details

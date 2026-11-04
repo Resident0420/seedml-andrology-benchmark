@@ -221,3 +221,46 @@ def get_models(preprocessor):
         pass
 
     return models
+
+def get_search_spaces():
+    return {
+        "Logistic Regression": {
+            "classifier__C": [0.01, 0.1, 1, 10, 100],
+        },
+        "Random Forest": {
+            "classifier__n_estimators": [300, 500, 1000],
+            "classifier__max_features": ["sqrt", "log2", 0.5],
+            "classifier__max_depth": [None, 10, 20],
+            "classifier__min_samples_leaf": [1, 2, 5],
+        },
+        "XGBoost": {
+            "classifier__estimator__n_estimators": [300, 500, 1000],
+            "classifier__estimator__learning_rate": [0.03, 0.05, 0.1],
+            "classifier__estimator__max_depth": [3, 6, 9],
+            "classifier__estimator__min_child_weight": [1, 5, 10],
+            "classifier__estimator__subsample": [0.8, 1.0],
+            "classifier__estimator__colsample_bytree": [0.8, 1.0],
+        },
+        "LightGBM": {
+            "classifier__n_estimators": [300, 500, 1000],
+            "classifier__learning_rate": [0.03, 0.05, 0.1],
+            "classifier__num_leaves": [15, 31, 63],
+            "classifier__min_child_samples": [5, 10, 20],
+            "classifier__colsample_bytree": [0.8, 1.0],
+        },
+        "CatBoost": {
+            "classifier__iterations": [300, 500, 1000],
+            "classifier__learning_rate": [0.03, 0.05, 0.1],
+            "classifier__depth": [4, 6, 8],
+            "classifier__l2_leaf_reg": [1, 3, 10],
+        },
+        "MLP": {
+            "classifier__estimator__hidden_layer_sizes": [
+                (64,),
+                (128,),
+                (128, 64),
+            ],
+            "classifier__estimator__alpha": [0.0001, 0.001, 0.01],
+            "classifier__estimator__learning_rate_init": [0.0003, 0.001],
+        },
+    }
